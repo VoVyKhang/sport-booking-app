@@ -4,10 +4,13 @@ import {CalendarDaysIcon, ClockIcon} from 'react-native-heroicons/outline'
 import {Divide} from '../components'
 import {AlertDialog, Button} from 'native-base'
 import {useNavigation} from '@react-navigation/native'
+import {useDispatch} from 'react-redux'
+import {cancelBooking} from '../services/booking/bookingSlice'
 
-const BookingItem = ({day, start, end, tracking, sportCenter, address, index}) => {
+const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id}) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const onClose = () => setIsOpen(false)
+  const dispatch = useDispatch()
 
   const cancelRef = React.useRef(null)
 
@@ -17,9 +20,14 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, index}) =
     return string.length < length ? string : string.substring(0, length) + end
   }
 
+  const handleCancelBooking = (id) => {
+    dispatch(cancelBooking(id))
+    setIsOpen(false)
+  }
+
   return (
     <TouchableOpacity
-      key={index}
+      key={key}
       onPress={() => navigation.navigate('BookingDetailScreen')}
       className="border p-4 rounded-xl border-gray-500 mt-8"
     >
@@ -66,7 +74,7 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, index}) =
                   >
                     Cancel
                   </Button>
-                  <Button colorScheme="danger" onPress={onClose}>
+                  <Button colorScheme="danger" onPress={() => handleCancelBooking(id)}>
                     Yes
                   </Button>
                 </Button.Group>

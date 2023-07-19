@@ -66,7 +66,7 @@ const FirstRoute = () => {
 }
 
 const SecondRoute = () => (
-  <ScrollView className="px-3">
+  <ScrollView className="px-3 h-10">
     <View className="mb-3 mt-3 px-1">
       <View className="flex-row mb-1">
         <StarIcon size={18} color={'#00C187'} />
@@ -84,7 +84,7 @@ const SecondRoute = () => (
     </View>
     <Divide backgroundColor="black" height={2} />
 
-    <View className="mb-3 mt-3 px-1">
+    {/* <View className="mb-3 mt-3 px-1">
       <View className="flex-row mb-1">
         <StarIcon size={18} color={'#00C187'} />
         <StarIcon size={18} color={'#00C187'} />
@@ -99,7 +99,7 @@ const SecondRoute = () => (
         <Text className="text-xs ml-4">May 17, 2023</Text>
       </View>
     </View>
-    <Divide backgroundColor="black" height={2} />
+    <Divide backgroundColor="black" height={2} /> */}
   </ScrollView>
 )
 
@@ -114,14 +114,6 @@ const ThirdRoute = () => (
         </Text>
       </View>
     </View>
-
-    {/* <View className="flex-row space-x-2 px-3 py-2">
-      <ClockIcon size={48} color={'#00C187'} />
-      <View className="space-y-1">
-        <Text className="text-sm text-gray-500">Sat - Sun</Text>
-        <Text className="text-base font-bold">09:00 - 23: 00</Text>
-      </View>
-    </View> */}
   </View>
 )
 
@@ -211,12 +203,18 @@ const SportFieldDetailScreen = ({route, navigation}) => {
     <SafeAreaView className="bg-white flex-1">
       <View>
         <View className="h-60">
-          <Swiper loop autoplay activeDotColor={COLORS.black}>
-            {isLoading &&
-              sportCenterDetail.image.map((image, index) => (
-                <Image source={{uri: image}} className="w-full h-full" />
-              ))}
-          </Swiper>
+          {/* <Swiper loop autoplay activeDotColor={COLORS.black}>
+            {sportCenterDetail?.image?.map((image, index) => (
+              <Image
+                source={{
+                  uri:
+                    image ||
+                    'https://firebasestorage.googleapis.com/v0/b/thethaoplus-4d4e2.appspot.com/o/sportcenter%2Fsan-bong-tri-hai.jpg?alt=media&token=743c641f-2139-4348-8354-cc6fc981140f',
+                }}
+                className="w-full h-full"
+              />
+            ))}
+          </Swiper> */}
         </View>
 
         <View className="flex-row items-center justify-between p-4 absolute w-full">
@@ -228,9 +226,6 @@ const SportFieldDetailScreen = ({route, navigation}) => {
               onPress={() => navigation.goBack()}
             />
           </View>
-          {/* <View className="bg-[#00C187] w-10 h-10 rounded-full flex items-center justify-center opacity-80">
-            <Ionicons name="notifications-outline" size={24} color="white" />
-          </View> */}
         </View>
       </View>
 
@@ -252,13 +247,17 @@ const SportFieldDetailScreen = ({route, navigation}) => {
         <Divide backgroundColor="grey" height={2} />
         <View className="flex-row gap-2 mb-4 mt-2 space-x-4">
           <View className="w-20 h-20">
-            <Image
-              source={{uri: sportCenterDetail?.image[0]}}
+            {/* <Image
+              source={{
+                uri:
+                  sportCenterDetail?.image[0] ||
+                  'https://firebasestorage.googleapis.com/v0/b/thethaoplus-4d4e2.appspot.com/o/sportcenter%2Fsan-bong-tri-hai.jpg?alt=media&token=743c641f-2139-4348-8354-cc6fc981140f',
+              }}
               className="rounded-lg w-full h-full"
-            />
+            /> */}
           </View>
 
-          <View className="space-y-3" style={{width: width - 120}}>
+          <View className="space-y-3" style={{width: width - 130}}>
             <Text className="text-[16px] text-gray-500 font-bold tracking-wide">
               {sportCenterDetail?.address}
             </Text>

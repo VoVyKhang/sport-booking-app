@@ -17,8 +17,6 @@ import {Box, Flex} from 'native-base'
 import {useNavigation} from '@react-navigation/native'
 import {useDispatch} from 'react-redux'
 import {LoginUser} from '../services/auth/authSlice'
-import {signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth'
-import {auth, db} from '../firebase/firebase-config'
 
 const LoginScreen = () => {
   const [inputs, setInputs] = useState({email: '', password: ''})
@@ -146,14 +144,3 @@ const LoginScreen = () => {
 }
 
 export default LoginScreen
-
-const styles = StyleSheet.create({
-  social: {
-    backgroundColor: COLORS.light,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: 170,
-  },
-})

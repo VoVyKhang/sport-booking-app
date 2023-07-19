@@ -23,7 +23,7 @@ const HomeScreen = () => {
     dispatch(getAllSportCenters())
   }, [])
 
-  const sportCenterFeatured = useRef(sportCenters.filter((sport) => sport.totalrating >= '5'))
+  const sportCenterFeatured = useRef(sportCenters?.filter((sport) => sport.totalrating >= '5'))
 
   const limit = (string, length, end = '...') => {
     return string.length < length ? string : string.substring(0, length) + end
@@ -37,8 +37,8 @@ const HomeScreen = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          getSportCenters(item._id)
-          navigation.navigate('SportCenter')
+          // getSportCenters(item._id)
+          navigation.navigate('SportCenter', {id: item._id})
         }}
         className="w-28 h-28 my-2 bg-[#e7e8ea] shadow-lg shadow-gray-500 items-center justify-center mx-2 rounded-xl"
       >
@@ -118,13 +118,13 @@ const HomeScreen = () => {
       <View className="w-full ml-1 mt-3 mx-3">
         {loading ? (
           <ActivityIndicator className="mt-14" size="large" color="#00ff00" />
-        ) : sportCenterFeatured.current.length <= 0 ? (
+        ) : sportCenterFeatured?.current?.length <= 0 ? (
           <View className="items-center mt-4">
             <Text className="text-base ">This sport doesn't have any featured sport center</Text>
           </View>
         ) : (
           <FlatList
-            data={sportCenterFeatured.current}
+            data={sportCenterFeatured?.current}
             horizontal
             renderItem={renderItemFeatured}
             keyExtractor={(item) => item._id}

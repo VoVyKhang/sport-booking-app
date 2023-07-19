@@ -5,11 +5,10 @@ import React, {useState} from 'react'
 import {Alert, Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native'
 import {ButtonCustom, Input, Loader, TitleName} from '../components'
 import {COLORS} from '../constants'
-import {createUserWithEmailAndPassword, onAuthStateChanged, updateProfile} from 'firebase/auth'
-import {auth, db} from '../firebase/firebase-config'
-import {addDoc, collection} from 'firebase/firestore'
+
 import {RegisterUser} from '../services/auth/authSlice'
 import {useDispatch} from 'react-redux'
+import {MaterialIcons} from '@expo/vector-icons'
 
 const RegistrationScreen = ({navigation}) => {
   const [inputs, setInputs] = useState({
@@ -25,9 +24,30 @@ const RegistrationScreen = ({navigation}) => {
   const [role, setRole] = useState('user')
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
-  const [userInfo, setUserInfo] = useState('')
   const dispatch = useDispatch()
+  const [isValidationGender, setIsValidGender] = useState(true)
 
+  function isValidYearOfBirth(year) {
+    const currentYear = new Date().getFullYear()
+    const minAllowedYear = currentYear - 120 // Assuming people won't be older than 120 years
+    const maxAllowedYear = currentYear // Assuming people are not born in the future
+
+    if (typeof year !== 'number') {
+      return false
+    }
+
+    if (year < 1000 || year > 9999) {
+      return false
+    }
+
+    if (year < minAllowedYear || year > maxAllowedYear) {
+      return false
+    }
+
+    return true
+  }
+
+  // var isValidationGender = true
   const validate = async () => {
     Keyboard.dismiss()
     let isValid = true
@@ -63,6 +83,19 @@ const RegistrationScreen = ({navigation}) => {
       isValid = false
     }
 
+    if (!inputs.gender) {
+      handleError('Please choose gender', 'gender')
+      setIsValidGender(false)
+    }
+
+    if (!inputs.YOB) {
+      handleError('Please input your YOB', 'YOB')
+      isValid = false
+    } else if (!isValidYearOfBirth(YOB)) {
+      handleError('Your YOB is not valid!', 'YOB')
+      isValid = false
+    }
+
     if (isValid) {
       console.log('inputs:', inputs)
       await register()
@@ -89,17 +122,9 @@ const RegistrationScreen = ({navigation}) => {
     dispatch(RegisterUser(newUser))
   }
 
-  // Firebase
-  onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser) {
-      setUserInfo(currentUser)
-    } else {
-      setUserInfo('')
-    }
-  })
-
   const handleOnchange = (text, input) => {
     setInputs((prevState) => ({...prevState, [input]: text}))
+    setIsValidGender(true)
   }
 
   const handleError = (error, input) => {
@@ -152,7 +177,11 @@ const RegistrationScreen = ({navigation}) => {
 
             <View className="flex-row items-center justify-between">
               <View>
-                <Text className="-mt-4 text-[#b4b4b8]">Gender</Text>
+                {!isValidationGender ? (
+                  <Text className="mt-4 text-[#b4b4b8]">Gender</Text>
+                ) : (
+                  <Text className="-mt-4 text-[#b4b4b8]">Gender</Text>
+                )}
 
                 <Box w={200} maxW="160" marginTop={1}>
                   <Select
@@ -161,10 +190,13 @@ const RegistrationScreen = ({navigation}) => {
                     fontSize={16}
                     color={'#b4b4b8'}
                     backgroundColor={'#f3f4fb'}
-                    borderColor={'#f3f3fb'}
+                    borderColor={!isValidationGender ? 'red.500' : '#f3f3fb'}
                     borderRadius={8}
                     height={52}
-                    onValueChange={(text) => handleOnchange(text, 'gender')}
+                    onValueChange={(text) => {
+                      handleError(null, 'gender')
+                      handleOnchange(text, 'gender')
+                    }}
                     placeholder="Enter Gender"
                     _selectedItem={{
                       bg: '#ccc',
@@ -176,6 +208,20 @@ const RegistrationScreen = ({navigation}) => {
                     <Select.Item label="Others" value="others" />
                   </Select>
                 </Box>
+                {!isValidationGender && (
+                  <Flex flexDirection="row" alignItems="center" style={{height: 30}}>
+                    <MaterialIcons name="error-outline" size={18} color="red" />
+                    <Text
+                      style={{
+                        color: 'red',
+                        fontSize: 12,
+                        marginLeft: 4,
+                      }}
+                    >
+                      {errors.gender}
+                    </Text>
+                  </Flex>
+                )}
               </View>
 
               <Input
@@ -185,7 +231,7 @@ const RegistrationScreen = ({navigation}) => {
                 lable="YOB"
                 width={164}
                 placeholder="Enter your YOB"
-                error={errors.phone}
+                error={errors.YOB}
               />
             </View>
 

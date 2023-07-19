@@ -108,8 +108,8 @@ const FilterScreen = ({navigation}) => {
               mt={1}
               onValueChange={(itemValue) => setDistrict(itemValue)}
             >
-              {districts.map((district, index) => (
-                <Select.Item id={index} label={district} value={district} />
+              {districts.map((district) => (
+                <Select.Item id={district} label={district} value={district} />
               ))}
             </Select>
           </Box>
@@ -135,8 +135,8 @@ const FilterScreen = ({navigation}) => {
                 mt={1}
                 onValueChange={(itemValue) => setFieldType(itemValue)}
               >
-                {fieldTypes.map((fieldType, index) => (
-                  <Select.Item id={index} label={fieldType} value={fieldType} />
+                {fieldTypes.map((fieldType) => (
+                  <Select.Item id={fieldType} label={fieldType} value={fieldType} />
                 ))}
               </Select>
             </Box>

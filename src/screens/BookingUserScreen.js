@@ -1,4 +1,4 @@
-import {View, Text, SafeAreaView, TouchableOpacity, ScrollView} from 'react-native'
+import {View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import {ArrowLeftIcon, BellIcon} from 'react-native-heroicons/outline'
 import {useNavigation} from '@react-navigation/native'
@@ -14,8 +14,6 @@ import {images} from '../constants'
 import {Image} from 'react-native'
 import {vector} from '../constants/images'
 
-// const sportFieldType = ['5x5', '7x7']
-
 const BookingUserScreen = ({route, navigation}) => {
   const [day, setDay] = useState('')
   const [slot, setSlot] = useState({})
@@ -23,17 +21,58 @@ const BookingUserScreen = ({route, navigation}) => {
   const dispatch = useDispatch()
   const {sportFieldType} = useSelector((state) => state.sportField)
   const {availability, price} = useSelector((state) => state.booking)
+  const {message} = useSelector((state) => state.booking)
+
   const [fieldType, setFieldType] = useState('')
+  // const [availableSlot, setAvailableSlot] = useState(availability)
+  // const [priceField, setPriceField] = useState(price)
 
   useEffect(() => {
     dispatch(getSportFieldType(id))
   }, [id])
+
+  // useEffect(() => {
+  //   setFieldType([])
+  //   setPriceField([])
+  // }, [])
+
   const checkAvailable = () => {
-    if (fieldType !== '' && day !== '') dispatch(checkBookingsAvailable({day, id, fieldType}))
+    if (fieldType !== '' && day !== '') {
+      let options = {
+        day: day,
+        fieldType: fieldType,
+        id: id,
+      }
+
+      const params = {
+        options,
+      }
+      dispatch(checkBookingsAvailable(params))
+    }
+  }
+
+  const handleBook = () => {
+    if (day === '') {
+      Alert.alert('Please select a day')
+    }
+
+    if (fieldType === '') {
+      Alert.alert('Please select a field type')
+    }
+
+    if (day !== '' && fieldType !== '') {
+      return navigation.navigate('BookingReviewScreen', {
+        day: day,
+        slot: slot,
+        fieldType: fieldType,
+        id: id,
+        price: price,
+      })
+    }
   }
 
   return (
-    <SafeAreaView className="flex-1">
+    <ScrollView className="flex-1">
       {/* Appbar */}
       <View className="bg-black w-full h-44 rounded-b-3xl">
         <View className="mt-10 flex-row items-center justify-between px-8">
@@ -41,7 +80,6 @@ const BookingUserScreen = ({route, navigation}) => {
             <ArrowLeftIcon size={24} color="#fff" />
           </TouchableOpacity>
           <Text className="text-white font-bold text-lg">Sport Center</Text>
-          {/* <BellIcon size={24} color="#fff" /> */}
           <Text></Text>
         </View>
       </View>
@@ -81,7 +119,7 @@ const BookingUserScreen = ({route, navigation}) => {
                   borderColor="#00C187"
                   accessibilityLabel="Choose type"
                   placeholder="Choose type"
-                  fontSize="18px"
+                  fontSize="16px"
                   _selectedItem={{
                     bg: '#00C187',
                     color: '#000',
@@ -94,7 +132,7 @@ const BookingUserScreen = ({route, navigation}) => {
                   }}
                 >
                   {sportFieldType.map((type) => (
-                    <Select.Item label={type} value={type} />
+                    <Select.Item key={type} label={type} value={type} />
                   ))}
                 </Select>
               </Box>
@@ -110,14 +148,14 @@ const BookingUserScreen = ({route, navigation}) => {
                 <ClockIcon size={28} color={'#14c38d'} />
                 <Text className="font-bold text-lg">Slot</Text>
               </View>
-              <Box maxW="100">
+              <Box>
                 <Select
                   selectedValue={slot}
                   minWidth="200"
                   borderColor="#00C187"
                   accessibilityLabel="Choose Slots"
                   placeholder="Choose Slots"
-                  fontSize="18px"
+                  fontSize="16px"
                   _selectedItem={{
                     bg: '#00C187',
                     color: '#000',
@@ -126,43 +164,36 @@ const BookingUserScreen = ({route, navigation}) => {
                   mt={1}
                   onValueChange={(itemValue) => setSlot(itemValue)}
                 >
-                  {availability.map((slot) => (
-                    <Select.Item label={`${slot?.startTime} - ${slot.endTime}`} value={slot} />
+                  {availability.map((slot, index) => (
+                    <Select.Item
+                      key={index}
+                      label={`${slot?.startTime} - ${slot?.endTime}`}
+                      value={JSON.stringify(slot)}
+                    />
                   ))}
                 </Select>
               </Box>
             </View>
-            {price.map((p, index) => (
-              <View key={index} className="flex-row px-4 mt-4 space-x-4">
-                <Image source={vector} className="h-7 w-7" />
-                <Text className="font-bold text-lg">{p} VND</Text>
-              </View>
-            ))}
+            {/* {price.map((p, index) => ( */}
+            <View className="flex-row px-4 mt-4 space-x-4">
+              <Image source={vector} className="h-7 w-7" />
+              {/* <Text className="font-bold text-lg">{price[0]} VND</Text> */}
+            </View>
+            {/* ))} */}
           </View>
         ) : (
           <View className="items-center mt-6">
-            <Text className="text-lg"> No slots {`${day ? `for ${day}` : ''}`}</Text>
+            <Text className="text-lg">
+              {`${day ? `No lots for ${day}` : 'Choose day that you want to book!'}`}
+            </Text>
           </View>
         )}
 
         <View className="px-10 bg-white py-4">
-          <ButtonCustom
-            title="Book"
-            borderRadius={10}
-            marginVertical={10}
-            onPress={() => {
-              navigation.navigate('BookingReviewScreen', {
-                day: day,
-                fieldType: fieldType,
-                slot: slot,
-                id: id,
-                price: price,
-              })
-            }}
-          />
+          <ButtonCustom title="Book" borderRadius={10} marginVertical={10} onPress={handleBook} />
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   )
 }
 

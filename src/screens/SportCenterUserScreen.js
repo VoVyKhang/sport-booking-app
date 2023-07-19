@@ -23,13 +23,21 @@ import {useState} from 'react'
 const SportCenterUserScreen = ({route}) => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const {id} = route.params || ''
   const {sportCenters, isLoading} = useSelector((state) => state.sportCenter)
 
   const limit = (string, length, end = '...') => {
     return string.length < length ? string : string.substring(0, length) + end
   }
 
+  useEffect(() => {
+    if (id) {
+      dispatch(getAllSportCenters(id))
+    }
+  }, [id])
+
   const renderItem = ({item}) => {
+    console.log(item._id)
     return (
       item.status === true && (
         <TouchableOpacity onPress={() => navigation.navigate('SportFieldDetail', {id: item._id})}>
@@ -45,8 +53,6 @@ const SportCenterUserScreen = ({route}) => {
                 <Text className="text-black text-xs">{item.totalrating}</Text>
               </View>
             </View>
-
-            {/* <View className="w-full h-[0.3] absolute bottom-7 mb-3 bg-black"></View> */}
           </View>
         </TouchableOpacity>
       )
@@ -69,15 +75,10 @@ const SportCenterUserScreen = ({route}) => {
 
       {/* Body */}
       <View className="bg-[#ECF3FF] w-full h-full -mt-20 rounded-tl-3xl rounded-tr-3xl">
-        {/* <View className="flex-row p-3 space-x-2 items-center border-2 border-[#00C187] mt-4 mx-4 rounded-lg">
-          <MagnifyingGlassIcon size={24} color="#000" />
-          <TextInput placeholder="Enter something" keyboardType="default" />
-        </View> */}
-
         <View className="flex-1 w-full mt-4">
           {isLoading ? (
             <ActivityIndicator className="mt-14" size="large" color="#00ff00" />
-          ) : sportCenters.length > 0 ? (
+          ) : sportCenters?.length > 0 ? (
             <FlatList
               data={sportCenters}
               renderItem={renderItem}

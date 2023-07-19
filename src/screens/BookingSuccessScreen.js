@@ -13,20 +13,23 @@ import {
   vector,
 } from '../constants/images'
 import {ArrowLeftIcon, MapPinIcon, PhoneIcon, StarIcon} from 'react-native-heroicons/outline'
-import {ButtonCustom, Divide} from '../components'
+import {ButtonCustom, Divide, Loader} from '../components'
 import {useSelector} from 'react-redux'
 
 const BookingSuccessScreen = ({navigation, route}) => {
   const {sportCenterDetail} = useSelector((state) => state.sportCenter)
   const {message, loading} = useSelector((state) => state.booking)
-  const {day = null, fieldType = null, slot = null, id = null, price = null} = route.params
+  const {booking, day, slot, fieldType, id, price} = route.params
   return (
     <SafeAreaView>
       <Image source={background_success} className="w-full h-full relative" />
       <TouchableOpacity onPress={() => navigation.goBack()} className="absolute top-6 left-4">
         <ArrowLeftIcon size={22} color="#000" />
       </TouchableOpacity>
-      {loading && message === 'Ok' ? (
+
+      {loading ? (
+        <Loader visible={true} />
+      ) : (
         <>
           <View className="absolute top-12 left-40">
             <Image source={success_icon} />
@@ -36,7 +39,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
             <Text className="mt-2 text-base">We received your booking request.</Text>
             <Text className=" text-base">We'll let you know once it is confirmed</Text>
           </View>
-          <ScrollView className="absolute bg-white w-[344] h-[440] top-64 left-6 rounded-3xl">
+          <ScrollView className="absolute bg-white w-[344] h-[440] mb-12 top-64 left-6 rounded-3xl">
             <Image source={divide} className="mx-6" />
 
             <View className="flex-row items-center self-center space-x-2 -mt-12">
@@ -49,14 +52,14 @@ const BookingSuccessScreen = ({navigation, route}) => {
             <Text className="mt-6 px-4 text-sm text-gray-600">Date & time</Text>
             <View className="flex-row px-4 justify-between">
               <Text className="text-[18px]">
-                {day} | {slot.startTime} - {slot.endTime}
+                {day} | {JSON.parse(slot).startTime} - {JSON.parse(slot).endTime}
               </Text>
               {/* <View className="bg-[#e6e6ea] w-20 h-10 items-center -mt-3 justify-center rounded-lg">
             <Text>Pending</Text>
           </View> */}
             </View>
 
-            <Image source={{uri: sportCenterDetail.image}} className="w-full h-36 mt-4" />
+            <Image source={{uri: sportCenterDetail.image[0]}} className="w-full h-36 mt-4" />
 
             <View className="p-3 pr-2">
               <View className="flex-row space-x-2 mt-1 pr-6">
@@ -86,11 +89,8 @@ const BookingSuccessScreen = ({navigation, route}) => {
 
               <View className="flex-row justify-end space-x-2 mt-4 pb-2 items-center">
                 <Image source={vector} />
-                {price.map((p, index) => (
-                  <Text key={index} className="text-[20px] font-bold">
-                    {p} VND
-                  </Text>
-                ))}
+
+                <Text className="text-[20px] font-bold">{price[0]} VND</Text>
               </View>
             </View>
 
@@ -107,11 +107,6 @@ const BookingSuccessScreen = ({navigation, route}) => {
             </View>
           </ScrollView>
         </>
-      ) : (
-        <View className="absolute top-36 items-center left-20">
-          <Text className="text-[24px] font-bold">Your booking was failed!</Text>
-          <Text className="mt-2 text-base">Please try again!.</Text>
-        </View>
       )}
     </SafeAreaView>
   )

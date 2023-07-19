@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/native'
 import {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getAllBooking} from '../services/booking/bookingSlice'
+import {ScrollView} from 'react-native'
 
 const {width, height} = Dimensions.get('window')
 
@@ -34,6 +35,8 @@ const MyBookingScreen = ({navigation}) => {
   useEffect(() => {
     dispatch(getAllBooking())
   }, [])
+
+  console.log(bookingHistory)
 
   return (
     <SafeAreaView>
@@ -63,15 +66,16 @@ const MyBookingScreen = ({navigation}) => {
         </View>
 
         {/* Content tab */}
-        <View>
+        <ScrollView>
           {status === 'upcoming' && (
             <View className=" mx-4">
-              {isLoading && bookingHistory.length > 0 ? (
-                bookingHistory.map((item, index) => {
-                  if (item.tracking === ' pending') {
+              {bookingHistory.length > 0 ? (
+                bookingHistory.map((item) => {
+                  if (item.tracking === 'Pending') {
                     return (
                       <BookingItem
-                        key={index}
+                        key={item._id}
+                        id={item._id}
                         day={item.date}
                         start={item.start}
                         end={item.end}
@@ -89,13 +93,13 @@ const MyBookingScreen = ({navigation}) => {
               )}
             </View>
           )}
-        </View>
+        </ScrollView>
         <View>
           {status === 'history' && (
             <View className=" mx-4">
-              {isLoading && bookingHistory.length > 0 ? (
+              {bookingHistory.length > 0 ? (
                 bookingHistory.map((item, index) => {
-                  if (item.tracking === 'accepted' || item.tracking === 'cancel') {
+                  if (item.tracking === 'Accepted' || item.tracking === 'Cancel') {
                     return (
                       <BookingItem
                         key={index}

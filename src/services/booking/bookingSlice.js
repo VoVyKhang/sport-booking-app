@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {
+  cancelBookingThunk,
   checkBookingsAvailableThunk,
   getAllBookingThunk,
   getBookingDetailThunk,
@@ -33,6 +34,8 @@ export const getBookingDetails = createAsyncThunk(
   'booking/get-booking-details',
   getBookingDetailThunk
 )
+
+export const cancelBooking = createAsyncThunk('booking/cancel-booking', cancelBookingThunk)
 
 const bookingSlice = createSlice({
   name: 'booking',
@@ -93,6 +96,20 @@ const bookingSlice = createSlice({
         state.bookingDetails = {...action.payload?.getBooking}
       })
       .addCase(getBookingDetails.rejected, (state) => {
+        state.isLoading = false
+        state.isError = true
+        state.isSuccess = false
+      })
+      .addCase(cancelBooking.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(cancelBooking.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = false
+        state.isSuccess = true
+        state.message = action.payload?.message
+      })
+      .addCase(cancelBooking.rejected, (state) => {
         state.isLoading = false
         state.isError = true
         state.isSuccess = false

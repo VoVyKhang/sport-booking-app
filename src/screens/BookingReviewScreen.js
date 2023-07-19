@@ -1,4 +1,4 @@
-import {View, Text, SafeAreaView, Image, TouchableOpacity} from 'react-native'
+import {View, Text, SafeAreaView, Image, TouchableOpacity, ScrollView} from 'react-native'
 import React from 'react'
 import {background_header, map, sanBong, sanBong1, soccer_field, vector} from '../constants/images'
 import {ArrowBackIcon, Divider} from 'native-base'
@@ -11,18 +11,16 @@ import {validateDayBooking} from '../services/booking/bookingSlice'
 const BookingReviewScreen = ({route, navigation}) => {
   const dispatch = useDispatch()
   const {sportCenterDetail} = useSelector((state) => state.sportCenter)
-  const {message} = useSelector((state) => state.booking)
   const {day = null, fieldType = null, slot = null, id = null, price = null} = route.params
 
   const createBooking = () => {
-    if (day !== null && slot !== {} && id !== null) {
-      const start = slot.startTime
-      const end = slot.endTime
-      dispatch(validateDayBooking({day, start, end, id}))
-    }
+    const start = JSON.parse(slot).startTime
+    const end = JSON.parse(slot).endTime
+    dispatch(validateDayBooking({day, start, end, id, navigation, slot, price, fieldType}))
   }
+
   return (
-    <SafeAreaView>
+    <ScrollView>
       <Image source={background_header} className="w-full" />
       <View className=" flex-row items-center justify-between px-4 -mt-10">
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -31,7 +29,7 @@ const BookingReviewScreen = ({route, navigation}) => {
         <Text className="text-2xl font-bold">Booking Review</Text>
       </View>
 
-      <Image source={{uri: sportCenterDetail.image}} className="w-full h-48 mt-2" />
+      <Image source={{uri: sportCenterDetail?.image[0]}} className="w-full h-48 mt-2" />
 
       <View className="p-5">
         <View className="flex-row justify-between">
@@ -65,7 +63,7 @@ const BookingReviewScreen = ({route, navigation}) => {
         <Text className="mt-4 text-sm text-gray-600">Date & time</Text>
         <View className="flex-row justify-between">
           <Text className="text-[18px]">
-            {day} | {slot.startTime} - {slot.endTime}
+            {day} | {JSON.parse(slot).startTime} - {JSON.parse(slot).endTime}
           </Text>
           {/* <View className="bg-[#e6e6ea] w-20 h-10 items-center -mt-3 justify-center rounded-lg">
             <Text>Pending</Text>
@@ -101,8 +99,16 @@ const BookingReviewScreen = ({route, navigation}) => {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   )
 }
+
+// {
+//   day: options.day,
+//   slot: options.slot,
+//   fieldType: options.fieldType,
+//   id: options.id,
+//   price: options.price,
+// }
 
 export default BookingReviewScreen

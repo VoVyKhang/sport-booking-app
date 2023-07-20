@@ -11,6 +11,7 @@ export const checkBookingsAvailableThunk = async (params, thunkAPI) => {
       const response = await axiosClient.getByUrl(
         `/booking/bookings-available?date=${day}&sportCenterId=${id}&fieldType=${fieldType}`
       )
+      console.log(response)
       return response
     } catch (error) {
       console.log('Check booking error thunk: ', error)
@@ -25,14 +26,13 @@ export const vaidateDateBooking = async (options, thunkAPI) => {
     axiosClient.setHeaderAuth(JSON.parse(accessToken))
     try {
       const response = await axiosClient.getByUrl(
-        `/booking/validate-date-booking?date=${options.day}&start=${options.startDay}&end=${options.endDay}&sportFieldId=${options.id}`
+        `/booking/validate-date-booking?date=${options.day}&start=${options.start}&end=${options.end}&sportFieldId=${options.id}`
       )
-      if (response.message === 'Sport Field created successfully') {
-        console.log('resL: ' + response.message)
-        options.navigation.navigate('BookingSuccessScreen', {
-          booking: response.newBooking,
+      if (response.message === 'Ok') {
+        options.navigation.navigate('BookingReviewScreen', {
           day: options.day,
-          slot: options.slot,
+          start: options.start,
+          end: options.end,
           fieldType: options.fieldType,
           id: options.id,
           price: options.price,
@@ -47,7 +47,6 @@ export const vaidateDateBooking = async (options, thunkAPI) => {
 }
 
 export const getAllBookingThunk = async (_, thunkAPI) => {
-  console.log('bbbb')
   const accessToken = await AsyncStorage.getItem('accessToken')
   if (accessToken) {
     axiosClient.setHeaderAuth(JSON.parse(accessToken))
@@ -88,6 +87,32 @@ export const cancelBookingThunk = async (id, thunkAPI) => {
       }
     } catch (error) {
       console.log('get booking detail error thunk: ', error)
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+}
+
+export const createBookingThunk = async (params, thunkAPI) => {
+  const accessToken = await AsyncStorage.getItem('accessToken')
+  if (accessToken) {
+    axiosClient.setHeaderAuth(JSON.parse(accessToken))
+    try {
+      const res = await axiosClient.post('/booking/create-booking-for-user', params.options)
+      if (res.message === 'Sport Field created successfully.' && res.newBooking !== {}) {
+        params.navigation.navigate('BookingSuccessScreen', {
+          date: params.options.date,
+          start: params.options.start,
+          end: params.options.end,
+          fieldType: params.fieldType,
+          id: params.id,
+          price: params.price,
+        })
+      } else {
+        Alert.alert(res.message)
+      }
+      return res
+    } catch (error) {
+      console.log('create booking error thunk: ', error)
       return thunkAPI.rejectWithValue(error)
     }
   }

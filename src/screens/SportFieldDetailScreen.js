@@ -16,7 +16,7 @@ import {AntDesign, Entypo, FontAwesome5, Ionicons, Octicons} from '@expo/vector-
 import {useNavigation} from '@react-navigation/native'
 import {FontAwesome} from '@expo/vector-icons'
 import {Feather} from '@expo/vector-icons'
-import {ButtonCustom, Divide} from '../components'
+import {ButtonCustom, Divide, Loader} from '../components'
 const {width, height} = Dimensions.get('window')
 
 import {TabView, SceneMap} from 'react-native-tab-view'
@@ -25,6 +25,7 @@ import {camera, car, house, sanBong1, shirt, shop} from '../constants/images'
 import {ClockIcon, StarIcon, UserCircleIcon} from 'react-native-heroicons/outline'
 import {useDispatch, useSelector} from 'react-redux'
 import {getSportCenterDetail} from '../services/sportCenter/sportCenterSlice'
+import {getSportFieldType} from '../services/sportField/sportFieldSlice'
 
 var openTime = ''
 var closeTime = ''
@@ -128,16 +129,9 @@ const renderScene = SceneMap({
 
 const SportFieldDetailScreen = ({route, navigation}) => {
   const {sportCenterDetail, isLoading} = useSelector((state) => state.sportCenter)
-  const {id} = route.params || ''
   const dispatch = useDispatch()
   openTime = sportCenterDetail.openTime
   closeTime = sportCenterDetail.closeTime
-
-  useEffect(() => {
-    if (id) {
-      dispatch(getSportCenterDetail(id))
-    }
-  }, [id])
 
   const [index, setIndex] = React.useState(0)
   const [routes] = React.useState([
@@ -199,98 +193,106 @@ const SportFieldDetailScreen = ({route, navigation}) => {
     )
   }
 
+  const handleGetFieldType = (id) => {
+    dispatch(getSportFieldType(id))
+    navigation.navigate('BookingScreen', {id: id})
+  }
+
   return (
     <SafeAreaView className="bg-white flex-1">
-      <View>
-        <View className="h-60">
-          {/* <Swiper loop autoplay activeDotColor={COLORS.black}>
-            {sportCenterDetail?.image?.map((image, index) => (
-              <Image
-                source={{
-                  uri:
-                    image ||
-                    'https://firebasestorage.googleapis.com/v0/b/thethaoplus-4d4e2.appspot.com/o/sportcenter%2Fsan-bong-tri-hai.jpg?alt=media&token=743c641f-2139-4348-8354-cc6fc981140f',
+      {isLoading ? (
+        <Loader visible={true} />
+      ) : (
+        <>
+          <View>
+            <View className="h-60">
+              <Swiper loop autoplay activeDotColor={COLORS.black}>
+                {sportCenterDetail?.image?.map((image, index) => (
+                  <Image
+                    source={{
+                      uri: image,
+                    }}
+                    key={index}
+                    className="w-full h-full"
+                  />
+                ))}
+              </Swiper>
+            </View>
+
+            <View className="flex-row items-center justify-between p-4 absolute w-full">
+              <View className="bg-[#00C187] w-10 h-10 rounded-full flex items-center justify-center opacity-80">
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="white"
+                  onPress={() => navigation.goBack()}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View
+            className="flex-1 bg-[#ECF3FF] absolute w-full h-full rounded-t-3xl p-5"
+            style={{top: 220}}
+          >
+            <Text className="text-[20px] font-bold tracking-wide">{sportCenterDetail?.name}</Text>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center mb-2 mt-2 space-x-2">
+                <Feather name="phone" size={22} color={COLORS.primary} />
+                <Text className="text-[16px]">0914360736</Text>
+              </View>
+              <View className="flex-row items-center space-x-1 mb-2">
+                <FontAwesome name="star" size={22} color={COLORS.yellow} />
+                <Text className="text-[16px]">{sportCenterDetail?.totalrating}</Text>
+              </View>
+            </View>
+            <Divide backgroundColor="grey" height={2} />
+            <View className="flex-row gap-2 mb-4 mt-2 space-x-4">
+              <View className="w-20 h-20">
+                <Image
+                  source={{
+                    uri: sportCenterDetail?.image[0],
+                  }}
+                  className="rounded-lg w-full h-full"
+                />
+              </View>
+
+              <View className="space-y-3" style={{width: width - 130}}>
+                <Text className="text-[16px] text-gray-500 font-bold tracking-wide">
+                  {sportCenterDetail?.address}
+                </Text>
+              </View>
+            </View>
+            <Divide backgroundColor="grey" height={2} />
+            {/* </ScrollView> */}
+            <NativeBaseProvider>
+              <TabView
+                navigationState={{
+                  index,
+                  routes,
                 }}
-                className="w-full h-full"
+                renderScene={renderScene}
+                renderTabBar={renderTabBar}
+                onIndexChange={setIndex}
+                id={index}
+                initialLayout={initialLayout}
+                style={{
+                  marginTop: 12,
+                }}
               />
-            ))}
-          </Swiper> */}
-        </View>
-
-        <View className="flex-row items-center justify-between p-4 absolute w-full">
-          <View className="bg-[#00C187] w-10 h-10 rounded-full flex items-center justify-center opacity-80">
-            <AntDesign
-              name="arrowleft"
-              size={24}
-              color="white"
-              onPress={() => navigation.goBack()}
-            />
+            </NativeBaseProvider>
           </View>
-        </View>
-      </View>
-
-      <View
-        className="flex-1 bg-[#ECF3FF] absolute w-full h-full rounded-t-3xl p-5"
-        style={{top: 220}}
-      >
-        <Text className="text-[20px] font-bold tracking-wide">{sportCenterDetail?.name}</Text>
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center mb-2 mt-2 space-x-2">
-            <Feather name="phone" size={22} color={COLORS.primary} />
-            <Text className="text-[16px]">0914360736</Text>
-          </View>
-          <View className="flex-row items-center space-x-1 mb-2">
-            <FontAwesome name="star" size={22} color={COLORS.yellow} />
-            <Text className="text-[16px]">{sportCenterDetail?.totalrating}</Text>
-          </View>
-        </View>
-        <Divide backgroundColor="grey" height={2} />
-        <View className="flex-row gap-2 mb-4 mt-2 space-x-4">
-          <View className="w-20 h-20">
-            {/* <Image
-              source={{
-                uri:
-                  sportCenterDetail?.image[0] ||
-                  'https://firebasestorage.googleapis.com/v0/b/thethaoplus-4d4e2.appspot.com/o/sportcenter%2Fsan-bong-tri-hai.jpg?alt=media&token=743c641f-2139-4348-8354-cc6fc981140f',
-              }}
-              className="rounded-lg w-full h-full"
-            /> */}
-          </View>
-
-          <View className="space-y-3" style={{width: width - 130}}>
-            <Text className="text-[16px] text-gray-500 font-bold tracking-wide">
-              {sportCenterDetail?.address}
-            </Text>
-          </View>
-        </View>
-        <Divide backgroundColor="grey" height={2} />
-        {/* </ScrollView> */}
-        <NativeBaseProvider>
-          <TabView
-            navigationState={{
-              index,
-              routes,
-            }}
-            renderScene={renderScene}
-            renderTabBar={renderTabBar}
-            onIndexChange={setIndex}
-            id={index}
-            initialLayout={initialLayout}
-            style={{
-              marginTop: 12,
-            }}
+          <ButtonCustom
+            height={36}
+            width={200}
+            borderRadius={12}
+            title="Book"
+            marginVertical={400}
+            marginHorizontal={100}
+            onPress={() => handleGetFieldType(sportCenterDetail._id)}
           />
-        </NativeBaseProvider>
-      </View>
-      <ButtonCustom
-        height={36}
-        width={200}
-        borderRadius={12}
-        title="Book"
-        marginVertical={400}
-        marginHorizontal={100}
-        onPress={() => navigation.navigate('BookingScreen', {id: sportCenterDetail._id})}
-      />
+        </>
+      )}
     </SafeAreaView>
   )
 }

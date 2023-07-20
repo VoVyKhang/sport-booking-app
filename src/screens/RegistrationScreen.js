@@ -91,9 +91,9 @@ const RegistrationScreen = ({navigation}) => {
     if (!inputs.YOB) {
       handleError('Please input your YOB', 'YOB')
       isValid = false
-    } else if (!isValidYearOfBirth(YOB)) {
-      handleError('Your YOB is not valid!', 'YOB')
-      isValid = false
+      // } else if (!isValidYearOfBirth(inputs.YOB)) {
+      //   handleError('Your YOB is not valid!', 'YOB')
+      //   isValid = false
     }
 
     if (isValid) {

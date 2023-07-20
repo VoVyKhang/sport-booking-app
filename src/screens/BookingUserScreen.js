@@ -6,7 +6,7 @@ import {Calendar} from 'react-native-calendars'
 import {ClockIcon} from 'react-native-heroicons/outline'
 import TimeItem from '../components/TimeItem'
 import {Box, CheckIcon, Select} from 'native-base'
-import {ButtonCustom, Divide} from '../components'
+import {ButtonCustom, Divide, Loader} from '../components'
 import {useDispatch, useSelector} from 'react-redux'
 import {getSportFieldType} from '../services/sportField/sportFieldSlice'
 import {checkBookingsAvailable, validateDayBooking} from '../services/booking/bookingSlice'
@@ -19,22 +19,10 @@ const BookingUserScreen = ({route, navigation}) => {
   const [slot, setSlot] = useState({})
   const {id} = route.params || ''
   const dispatch = useDispatch()
-  const {sportFieldType} = useSelector((state) => state.sportField)
+  const {sportFieldType, isLoading} = useSelector((state) => state.sportField)
   const {availability, price} = useSelector((state) => state.booking)
-  const {message} = useSelector((state) => state.booking)
 
   const [fieldType, setFieldType] = useState('')
-  // const [availableSlot, setAvailableSlot] = useState(availability)
-  // const [priceField, setPriceField] = useState(price)
-
-  useEffect(() => {
-    dispatch(getSportFieldType(id))
-  }, [id])
-
-  // useEffect(() => {
-  //   setFieldType([])
-  //   setPriceField([])
-  // }, [])
 
   const checkAvailable = () => {
     if (fieldType !== '' && day !== '') {
@@ -50,24 +38,19 @@ const BookingUserScreen = ({route, navigation}) => {
       dispatch(checkBookingsAvailable(params))
     }
   }
+  console.log('slot:', slot)
 
-  const handleBook = () => {
-    if (day === '') {
-      Alert.alert('Please select a day')
+  const createBooking = () => {
+    if (day === '' || fieldType === '' || slot === {}) {
+      return Alert.alert('Please select full field')
     }
 
-    if (fieldType === '') {
-      Alert.alert('Please select a field type')
-    }
+    const start = JSON.parse(slot).startTime
+    const end = JSON.parse(slot).endTime
 
-    if (day !== '' && fieldType !== '') {
-      return navigation.navigate('BookingReviewScreen', {
-        day: day,
-        slot: slot,
-        fieldType: fieldType,
-        id: id,
-        price: price,
-      })
+    console.log('start:', start)
+    if (day !== '' && fieldType !== '' && slot !== {}) {
+      dispatch(validateDayBooking({day, start, end, id, navigation, price, fieldType}))
     }
   }
 
@@ -174,23 +157,27 @@ const BookingUserScreen = ({route, navigation}) => {
                 </Select>
               </Box>
             </View>
-            {/* {price.map((p, index) => ( */}
+
             <View className="flex-row px-4 mt-4 space-x-4">
               <Image source={vector} className="h-7 w-7" />
-              {/* <Text className="font-bold text-lg">{price[0]} VND</Text> */}
+              <Text className="font-bold text-lg">{price} VND</Text>
             </View>
-            {/* ))} */}
           </View>
         ) : (
           <View className="items-center mt-6">
             <Text className="text-lg">
-              {`${day ? `No lots for ${day}` : 'Choose day that you want to book!'}`}
+              {`${slot === {} ? `No lots for ${day}` : 'Choose day that you want to book!'}`}
             </Text>
           </View>
         )}
 
         <View className="px-10 bg-white py-4">
-          <ButtonCustom title="Book" borderRadius={10} marginVertical={10} onPress={handleBook} />
+          <ButtonCustom
+            title="Book"
+            borderRadius={10}
+            marginVertical={10}
+            onPress={createBooking}
+          />
         </View>
       </View>
     </ScrollView>

@@ -27,8 +27,19 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id})
 
   return (
     <TouchableOpacity
-      key={key}
-      onPress={() => navigation.navigate('BookingDetailScreen')}
+      id={key}
+      onPress={() =>
+        navigation.navigate('BookingDetailScreen', {
+          day,
+          start,
+          end,
+          tracking,
+          sportCenter,
+          address,
+          key,
+          id,
+        })
+      }
       className="border p-4 rounded-xl border-gray-500 mt-8"
     >
       <View className="flex-col space-y-2 items-center space-x-8 pb-4">

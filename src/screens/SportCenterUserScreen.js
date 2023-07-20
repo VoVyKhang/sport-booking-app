@@ -17,7 +17,7 @@ import {
 } from 'react-native-heroicons/outline'
 import {useNavigation} from '@react-navigation/native'
 import {useDispatch, useSelector} from 'react-redux'
-import {getAllSportCenters} from '../services/sportCenter/sportCenterSlice'
+import {getAllSportCenters, getSportCenterDetail} from '../services/sportCenter/sportCenterSlice'
 import {useState} from 'react'
 
 const SportCenterUserScreen = ({route}) => {
@@ -36,11 +36,15 @@ const SportCenterUserScreen = ({route}) => {
     }
   }, [id])
 
+  const handleGetSportFieldDetail = (id) => {
+    dispatch(getSportCenterDetail(id))
+    navigation.navigate('SportFieldDetail')
+  }
+
   const renderItem = ({item}) => {
-    console.log(item._id)
     return (
       item.status === true && (
-        <TouchableOpacity onPress={() => navigation.navigate('SportFieldDetail', {id: item._id})}>
+        <TouchableOpacity onPress={() => handleGetSportFieldDetail(item._id)}>
           <View className="p-3 mx-4 my-2 flex-row bg-white rounded-xl space-x-4">
             <View className="w-28 h-28 items-center justify-center">
               <Image source={{uri: item.image[0]}} resizeMethod="scale" className="w-28 h-28" />

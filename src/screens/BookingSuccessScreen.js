@@ -18,8 +18,8 @@ import {useSelector} from 'react-redux'
 
 const BookingSuccessScreen = ({navigation, route}) => {
   const {sportCenterDetail} = useSelector((state) => state.sportCenter)
-  const {message, loading} = useSelector((state) => state.booking)
-  const {booking, day, slot, fieldType, id, price} = route.params
+  const {message, isLoading} = useSelector((state) => state.booking)
+  const {date, start, end, price, fieldType} = route.params
   return (
     <SafeAreaView>
       <Image source={background_success} className="w-full h-full relative" />
@@ -27,7 +27,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
         <ArrowLeftIcon size={22} color="#000" />
       </TouchableOpacity>
 
-      {loading ? (
+      {isLoading ? (
         <Loader visible={true} />
       ) : (
         <>
@@ -52,14 +52,14 @@ const BookingSuccessScreen = ({navigation, route}) => {
             <Text className="mt-6 px-4 text-sm text-gray-600">Date & time</Text>
             <View className="flex-row px-4 justify-between">
               <Text className="text-[18px]">
-                {day} | {JSON.parse(slot).startTime} - {JSON.parse(slot).endTime}
+                {date} | {start} - {end}
               </Text>
               {/* <View className="bg-[#e6e6ea] w-20 h-10 items-center -mt-3 justify-center rounded-lg">
             <Text>Pending</Text>
           </View> */}
             </View>
 
-            <Image source={{uri: sportCenterDetail.image[0]}} className="w-full h-36 mt-4" />
+            <Image source={{uri: sportCenterDetail?.image[0]}} className="w-full h-36 mt-4" />
 
             <View className="p-3 pr-2">
               <View className="flex-row space-x-2 mt-1 pr-6">
@@ -84,13 +84,13 @@ const BookingSuccessScreen = ({navigation, route}) => {
 
               <View className="flex-row items-center mt-2">
                 <Text className="text-orange-500 text-base">Pay before: </Text>
-                <Text className="text-base to-gray-400">18:00 - {day}</Text>
+                <Text className="text-base to-gray-400">18:00 - {date}</Text>
               </View>
 
               <View className="flex-row justify-end space-x-2 mt-4 pb-2 items-center">
                 <Image source={vector} />
 
-                <Text className="text-[20px] font-bold">{price[0]} VND</Text>
+                <Text className="text-[20px] font-bold">{price} VND</Text>
               </View>
             </View>
 

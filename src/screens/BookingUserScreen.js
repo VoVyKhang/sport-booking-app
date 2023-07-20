@@ -9,7 +9,11 @@ import {Box, CheckIcon, Select} from 'native-base'
 import {ButtonCustom, Divide, Loader} from '../components'
 import {useDispatch, useSelector} from 'react-redux'
 import {getSportFieldType} from '../services/sportField/sportFieldSlice'
-import {checkBookingsAvailable, validateDayBooking} from '../services/booking/bookingSlice'
+import {
+  checkBookingsAvailable,
+  resetAvailability,
+  validateDayBooking,
+} from '../services/booking/bookingSlice'
 import {images} from '../constants'
 import {Image} from 'react-native'
 import {vector} from '../constants/images'
@@ -23,6 +27,7 @@ const BookingUserScreen = ({route, navigation}) => {
   const {availability, price} = useSelector((state) => state.booking)
 
   const [fieldType, setFieldType] = useState('')
+  const currentDate = new Date().toISOString().split('T')[0]
 
   const checkAvailable = () => {
     if (fieldType !== '' && day !== '') {
@@ -38,10 +43,19 @@ const BookingUserScreen = ({route, navigation}) => {
       dispatch(checkBookingsAvailable(params))
     }
   }
+
+  useEffect(() => {
+    console.log('Unmount')
+    return () => dispatch(resetAvailability())
+  }, [])
+
   console.log('slot:', slot)
+  console.log('day:', day)
+  console.log('field type:', fieldType)
+  console.log('availability:', availability)
 
   const createBooking = () => {
-    if (day === '' || fieldType === '' || slot === {}) {
+    if (day === '' || fieldType === '' || Object.keys(slot).length === 0) {
       return Alert.alert('Please select full field')
     }
 
@@ -49,7 +63,7 @@ const BookingUserScreen = ({route, navigation}) => {
     const end = JSON.parse(slot).endTime
 
     console.log('start:', start)
-    if (day !== '' && fieldType !== '' && slot !== {}) {
+    if (day !== '' && fieldType !== '' && Object.keys(slot).length !== 0) {
       dispatch(validateDayBooking({day, start, end, id, navigation, price, fieldType}))
     }
   }
@@ -71,6 +85,7 @@ const BookingUserScreen = ({route, navigation}) => {
       <View className="bg-[#fff] w-full flex-1 -mt-20 rounded-tl-3xl rounded-tr-3xl">
         <Calendar
           markingType="custom"
+          minDate={currentDate}
           markedDates={{
             [day]: {
               selected: true,

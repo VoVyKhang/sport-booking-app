@@ -39,7 +39,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
             <Text className="mt-2 text-base">We received your booking request.</Text>
             <Text className=" text-base">We'll let you know once it is confirmed</Text>
           </View>
-          <ScrollView className="absolute bg-white w-[344] h-[440] mb-12 top-64 left-6 rounded-3xl">
+          <ScrollView className="absolute bg-white w-[344] h-[440] mb-12 top-64 left-7 rounded-3xl">
             <Image source={divide} className="mx-6" />
 
             <View className="flex-row items-center self-center space-x-2 -mt-12">

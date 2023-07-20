@@ -3,7 +3,7 @@ import {axiosClient} from '../../api/axiosClient'
 import {Alert} from 'react-native'
 
 export const checkBookingsAvailableThunk = async (params, thunkAPI) => {
-  const {day, id, fieldType} = params.options
+  const {day, id, fieldType = '5x5'} = params.options
   const accessToken = await AsyncStorage.getItem('accessToken')
   if (accessToken) {
     axiosClient.setHeaderAuth(JSON.parse(accessToken))
@@ -37,6 +37,8 @@ export const vaidateDateBooking = async (options, thunkAPI) => {
           id: options.id,
           price: options.price,
         })
+      } else {
+        Alert.alert('Your choice is not valid. Please try again')
       }
       return response
     } catch (error) {
@@ -108,7 +110,7 @@ export const createBookingThunk = async (params, thunkAPI) => {
           price: params.price,
         })
       } else {
-        Alert.alert(res.message)
+        Alert.alert(res.error.message)
       }
       return res
     } catch (error) {

@@ -44,7 +44,12 @@ export const createBooking = createAsyncThunk('booking/create-booking', createBo
 const bookingSlice = createSlice({
   name: 'booking',
   initialState,
-  reducers: {},
+  reducers: {
+    resetAvailability: (state) => {
+      state.availability = []
+      state.price = ''
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(checkBookingsAvailable.pending, (state) => {
@@ -137,4 +142,5 @@ const bookingSlice = createSlice({
   },
 })
 
+export const {resetAvailability} = bookingSlice.actions
 export default bookingSlice.reducer

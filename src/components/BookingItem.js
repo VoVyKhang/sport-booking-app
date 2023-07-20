@@ -5,9 +5,10 @@ import {Divide} from '../components'
 import {AlertDialog, Button} from 'native-base'
 import {useNavigation} from '@react-navigation/native'
 import {useDispatch} from 'react-redux'
-import {cancelBooking} from '../services/booking/bookingSlice'
+import {cancelBooking, getAllBooking} from '../services/booking/bookingSlice'
+import moment from 'moment/moment'
 
-const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id}) => {
+const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id, status}) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const onClose = () => setIsOpen(false)
   const dispatch = useDispatch()
@@ -22,8 +23,11 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id})
 
   const handleCancelBooking = (id) => {
     dispatch(cancelBooking(id))
+    dispatch(getAllBooking())
     setIsOpen(false)
   }
+
+  console.log(status)
 
   return (
     <TouchableOpacity
@@ -45,7 +49,7 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id})
       <View className="flex-col space-y-2 items-center space-x-8 pb-4">
         <View className="flex-row space-x-1 items-center">
           <CalendarDaysIcon size={20} color={'#000'} />
-          <Text className="font-bold text-base">{day}</Text>
+          <Text className="font-bold text-base">{moment(day).format('DD-MM-yyyy')}</Text>
         </View>
         <View className="flex-row space-x-1 items-center">
           <ClockIcon size={20} color={'#000'} />
@@ -62,8 +66,8 @@ const BookingItem = ({day, start, end, tracking, sportCenter, address, key, id})
 
       <View className="flex-row justify-between pt-4">
         <View>
-          <Text className="text-gray-500">{limit(address, 30)}</Text>
-          <Text className="font-bold text-base mt-1">{sportCenter}</Text>
+          {/* <Text className="text-gray-500">{limit(address, 30)}</Text> */}
+          {/* <Text className="font-bold text-base mt-1">{sportCenter}</Text> */}
         </View>
 
         <View>

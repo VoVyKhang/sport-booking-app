@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import {getTokenThunk, loginUserThunk, registerUserThunk} from './authThunk'
+import {changePasswordThunk, getTokenThunk, loginUserThunk, registerUserThunk} from './authThunk'
 // import Toast from 'react-native-toast-message'
 import {ToastAndroid} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -22,6 +22,7 @@ const initialState = {
 export const RegisterUser = createAsyncThunk('auth/RegisterUser', registerUserThunk)
 export const LoginUser = createAsyncThunk('auth/LoginUser', loginUserThunk)
 export const getToken = createAsyncThunk('auth/getToken', getTokenThunk)
+export const changePassword = createAsyncThunk('auth/changePassword', changePasswordThunk)
 
 const authSlice = createSlice({
   name: 'auth',
@@ -76,6 +77,20 @@ const authSlice = createSlice({
         state.token = action.payload
       })
       .addCase(getToken.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.isSuccess = false
+        state.message = action.payload
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = false
+        state.isSuccess = true
+      })
+      .addCase(changePassword.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.isSuccess = false

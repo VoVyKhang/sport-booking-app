@@ -34,6 +34,7 @@ import {Provider} from 'react-redux'
 import {store} from './src/services/configStore'
 import {registerRootComponent} from 'expo'
 import FilterScreen from './src/screens/FilterScreen'
+import {ButtonHandle} from './src/components/ButtonHandle'
 
 export default function App() {
   const Tab = createBottomTabNavigator()
@@ -102,12 +103,6 @@ export default function App() {
         name="ResetPasswordScreen"
         component={ResetPasswordScreen}
       />
-
-      <Stack.Screen
-        options={{headerShown: false}}
-        name="ChangePasswordScreen"
-        component={ChangePasswordScreen}
-      />
     </Stack.Navigator>
   )
 
@@ -137,6 +132,12 @@ export default function App() {
         options={{headerShown: false}}
         name="NotificationProfileScreen"
         component={NotificationProfileScreen}
+      />
+
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
       />
     </Stack.Navigator>
   )
@@ -215,9 +216,13 @@ export default function App() {
           options={{
             tabBarLabel: 'Home',
             headerShown: false,
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <Ionicons name="ios-home" size={25} color={focused ? COLORS.primary : COLORS.black} />
             ),
+            // tabBarButton: (props) => (
+            //   <ButtonHandle {...props} navigateName="HomeStack" screen="Home" />
+            // ),
           }}
         />
 
@@ -227,6 +232,7 @@ export default function App() {
           options={{
             tabBarLabel: 'Filter',
             headerShown: false,
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <Ionicons
                 name="ios-search"
@@ -234,6 +240,9 @@ export default function App() {
                 color={focused ? COLORS.primary : COLORS.black}
               />
             ),
+            // tabBarButton: (props) => (
+            //   <ButtonHandle {...props} navigateName="FilterStack" screen="Filter" />
+            // ),
           }}
         />
         <Tab.Screen
@@ -242,6 +251,7 @@ export default function App() {
           options={{
             tabBarLabel: 'Profile',
             headerShown: false,
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <FontAwesome
                 name="user-circle-o"
@@ -249,6 +259,9 @@ export default function App() {
                 color={focused ? COLORS.primary : COLORS.black}
               />
             ),
+            // tabBarButton: (props) => (
+            //   <ButtonHandle {...props} navigateName="ProfileStack" screen="Profile" />
+            // ),
           }}
         />
       </Tab.Navigator>

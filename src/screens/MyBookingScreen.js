@@ -8,6 +8,7 @@ import {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getAllBooking} from '../services/booking/bookingSlice'
 import {ScrollView} from 'react-native'
+import {Loader} from '../components'
 
 const {width, height} = Dimensions.get('window')
 
@@ -16,17 +17,16 @@ const listTab = [
     status: 'Upcoming',
     path: 'upcoming',
   },
-  {
-    status: 'History',
-    path: 'history',
-  },
 ]
 
 const MyBookingScreen = ({navigation}) => {
   const [status, setStatus] = useState('upcoming')
   const dispatch = useDispatch()
-  const {bookingHistory, isLoading} = useSelector((state) => state.booking)
+  const {bookingHistory: booking, isLoading} = useSelector((state) => state.booking)
   const {sportCenterDetail} = useSelector((state) => state.sportCenter)
+  const bookingHistory = [...booking]
+    .sort((a, b) => b.date - a.date)
+    .filter((item) => item.status === true)
 
   const setStatusFilter = (status) => {
     setStatus(status)
@@ -39,16 +39,20 @@ const MyBookingScreen = ({navigation}) => {
   console.log(bookingHistory)
 
   return (
-    <SafeAreaView>
-      <View className="flex-row justify-between items-center mx-4 my-4">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowBackIcon size={22} color="#000" />
-        </TouchableOpacity>
-        <Text className="text-[20px] font-bold">My Booking</Text>
-      </View>
+    <SafeAreaView className="flex-1">
+      {isLoading ? (
+        <Loader visible={true} />
+      ) : (
+        <>
+          <View className="flex-row justify-between items-center mx-4 my-4">
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <ArrowBackIcon size={22} color="#000" />
+            </TouchableOpacity>
+            <Text className="text-[20px] font-bold">My Booking</Text>
+          </View>
 
-      <View>
-        <View className="flex-row items-center justify-center border-b-2 border-gray-300 mb-3">
+          <View className="flex-1">
+            {/* <View className="flex-row items-center justify-center border-b-2 border-gray-300 mb-3">
           {listTab.map((item, index) => (
             <TouchableOpacity
               key={index}
@@ -63,65 +67,41 @@ const MyBookingScreen = ({navigation}) => {
               )}
             </TouchableOpacity>
           ))}
-        </View>
+        </View> */}
 
-        {/* Content tab */}
-        <ScrollView>
-          {status === 'upcoming' && (
-            <View className=" mx-4">
-              {bookingHistory.length > 0 ? (
-                bookingHistory.map((item) => {
-                  if (item.tracking === 'Pending') {
+            {/* Content tab */}
+            <ScrollView>
+              {/* {status === 'upcoming' && ( */}
+              <View className=" mx-4">
+                {bookingHistory.length > 0 ? (
+                  bookingHistory.map((item) => {
                     return (
-                      <BookingItem
-                        key={item._id}
-                        id={item._id}
-                        day={item.date}
-                        start={item.start}
-                        end={item.end}
-                        tracking={item.tracking}
-                        sportCenter={sportCenterDetail.name}
-                        address={sportCenterDetail.address}
-                      />
+                      item.status === true && (
+                        <BookingItem
+                          status={item.status}
+                          key={item._id}
+                          id={item._id}
+                          day={item.date}
+                          start={item.start}
+                          end={item.end}
+                          tracking={item.tracking}
+                          sportCenter={sportCenterDetail.name}
+                          address={sportCenterDetail.address}
+                        />
+                      )
                     )
-                  }
-                })
-              ) : (
-                <View className="items-center mt-4">
-                  <Text className="text-base">You don't have any upcoming booking</Text>
-                </View>
-              )}
-            </View>
-          )}
-        </ScrollView>
-        <View>
-          {status === 'history' && (
-            <View className=" mx-4">
-              {bookingHistory.length > 0 ? (
-                bookingHistory.map((item, index) => {
-                  if (item.tracking === 'Accepted' || item.tracking === 'Cancel') {
-                    return (
-                      <BookingItem
-                        key={index}
-                        day={item.date}
-                        start={item.start}
-                        end={item.end}
-                        tracking={item.tracking}
-                        sportCenter={sportCenterDetail.name}
-                        address={sportCenterDetail.address}
-                      />
-                    )
-                  }
-                })
-              ) : (
-                <View className="items-center mt-4">
-                  <Text className="text-base">You doesn't have any history booking</Text>
-                </View>
-              )}
-            </View>
-          )}
-        </View>
-      </View>
+                  })
+                ) : (
+                  <View className="items-center mt-4">
+                    <Text className="text-base">You don't have any upcoming booking</Text>
+                  </View>
+                )}
+              </View>
+              {/* )} */}
+            </ScrollView>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   )
 }

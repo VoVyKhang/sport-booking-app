@@ -76,7 +76,9 @@ const BookingDetailScreen = ({route, navigation}) => {
 
           <View className="flex-row items-center mt-2">
             <Text className="text-orange-500 text-[18px] font-bold">Pay before: </Text>
-            <Text className="text-[16px] to-gray-400">18:00 - {day}</Text>
+            <Text className="text-[16px] to-gray-400">
+              {start} - {day}
+            </Text>
           </View>
 
           {/* <View className="flex-row justify-end space-x-2 mt-6 pb-2 items-center">

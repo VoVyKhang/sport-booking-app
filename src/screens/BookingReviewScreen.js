@@ -14,7 +14,7 @@ const BookingReviewScreen = ({route, navigation}) => {
   const {sportFieldId} = useSelector((state) => state.booking)
   const {
     day = null,
-    fieldType = null,
+    fieldType = '5x5',
     end = null,
     start = null,
     id = null,

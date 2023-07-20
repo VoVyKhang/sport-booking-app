@@ -1,6 +1,7 @@
 import {axiosClient} from '../../api/axiosClient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {setError, setMessageSuccess} from './authSlice'
+import {Alert} from 'react-native'
 
 export const registerUserThunk = async (params, thunkAPI) => {
   try {
@@ -39,5 +40,26 @@ export const getTokenThunk = async (email, thunkAPI) => {
   } catch (error) {
     console.log('get booking detail error thunk: ', error)
     return thunkAPI.rejectWithValue(error)
+  }
+}
+
+export const changePasswordThunk = async (options, thunkAPI) => {
+  console.log(options)
+  const accessToken = await AsyncStorage.getItem('accessToken')
+  if (accessToken) {
+    axiosClient.setHeaderAuth(JSON.parse(accessToken))
+    try {
+      const response = await axiosClient.put2('/user/password', options.inputs)
+      if (response._id) {
+        Alert.alert('Change password successfully')
+        options.navigation.navigate('LoginScreen')
+      } else {
+        Alert.alert('Change password failed')
+      }
+      return response
+    } catch (error) {
+      console.log('Change password fail: ', error)
+      return thunkAPI.rejectWithValue(error)
+    }
   }
 }
